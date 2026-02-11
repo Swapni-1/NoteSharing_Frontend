@@ -44,6 +44,32 @@ const Post = ({ note, postUser }) => {
     fetchComment();
   }, []);
 
+//   async function getImageBlob(note) {
+//   try {
+//     const response = await fetch(note.thumbnailfilename);
+//     if (!response.ok) throw new Error('Network response was not ok');
+    
+//     const imageBlob = await response.blob();
+    
+//     // Create a local URL for the Blob
+//     const blobUrl = URL.createObjectURL(imageBlob);
+    
+//     // You can now set this to an <img> src
+//     // document.querySelector('#preview').src = blobUrl;
+    
+//     return blobUrl;
+//   } catch (error) {
+//     console.error("Error fetching blob:", error);
+//   }
+// }
+
+// getImageBlob()
+// .then((res) => {
+//    console.log(res);
+// })
+
+console.log(note.thumbnailfilename)
+
   const likehandler = () => {
     try {
       publicRequest.put("notes/" + note._id + "/like", { userId: user._id });

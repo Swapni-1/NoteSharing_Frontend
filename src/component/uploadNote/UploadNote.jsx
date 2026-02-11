@@ -38,7 +38,7 @@ const UploadNote = () => {
   const notename = useRef();
   const descritpion = useRef();
   const [isupload,setsetisupload]=useState(false)
-  const [fileurl,setfileurl]=useState("")
+  const [file,setFile]=useState(null)
   const [fileimg,setfileimg]=useState(null)
   const ShowFormHandler = () => {
     if ((ShowForm.current.style.display = "flex"))
@@ -48,21 +48,27 @@ const UploadNote = () => {
 
      alert("Uploading started, it will take few minutes...")
      e.preventDefault();
+     
     const newNote = {
       userId: user._id,
       desc: descritpion.current.value,
       notename:notename.current.value,
-      notefilename :fileurl,
     };
-    if (fileimg) {
+
+    if (fileimg && file) {
       const data = new FormData();
       data.append("file", fileimg);
-      data.append("upload_preset", 'handnoteimages');
-      const res=await axios.post("https://api.cloudinary.com/v1_1/dw2fok6if/image/upload",data)
-      newNote.thumbnailfilename = await  res.data.secure_url;
+      data.append("file",file);
+      // data.append("upload_preset", 'handnoteimages');
+      const res=await publicRequest.post("/uploads", data);
       
+      const {paths} = await res.data;
+
+      newNote.notefilename = paths[1];
+      newNote.thumbnailfilename = paths[0];      
     }
     try {
+      console.log("Reaching");
       await publicRequest.post("/notes", newNote);
       window.location.reload();
       alert("successfully uploaded")
@@ -109,10 +115,11 @@ const UploadNote = () => {
               required
             ></input>
             <input
-              type="text"
+              type="file"
               id="upload-note-input"
-              onChange={(e)=>setfileurl(e.target.value)}
-              placeholder="Url of note*"
+              onChange={(e)=>setFile(e.target.files[0])}
+              placeholder="Upload Notes"
+              accept=".pdf,.png,.jpeg,.jpg,.docx"
               required
             ></input>
             <label for="thumbnail-file-upload" className="custom-file-upload">
